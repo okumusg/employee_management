@@ -131,7 +131,7 @@ class Contract(models.Model):
                                          verbose_name=_("Work arrangement"),
                                          on_delete=models.CASCADE,
                                          related_name='contracts',
-                                         help_text=_("The employee who has this work contract."))
+                                         help_text=_("The work arrangement for this contract."))
     creation_time = models.DateTimeField(auto_now_add=True)
 
     def _pre_calculate_monthly_payment(self) -> Decimal:

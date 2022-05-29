@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.test import TestCase
 
 from employee.constants import PART_TIME, WEEK_COUNT_IN_MONTH, FULL_TIME, TEAM_LEADER_INCREASE_PERCENTAGE
@@ -77,7 +79,7 @@ class EmployeeModelTest(BaseTestSetup):
         Monthly base payment should be -> 160 * 10 = 1600 for employee_1 and employee_2
         %10 percent increase -> 1600 + 160 = 1760 for employee_1
         """
-        self.assertEquals(self.employee1.get_total_monthly_payment(), 1760)
+        self.assertAlmostEqual(self.employee1.get_total_monthly_payment(), Decimal(1760))
 
 
 class TeamModelTest(BaseTestSetup):
@@ -172,11 +174,11 @@ class ContractTest(BaseTestSetup):
         """
         monthly_payment = self.contract._pre_calculate_monthly_payment()
         monthly_payment_with_team_leader_increase = monthly_payment + (
-                monthly_payment * (TEAM_LEADER_INCREASE_PERCENTAGE / 100))
+                monthly_payment * Decimal(TEAM_LEADER_INCREASE_PERCENTAGE / 100))
 
-        self.assertEquals(self.contract._team_leader_increase(),
-                          monthly_payment_with_team_leader_increase)
-        self.assertEquals(self.contract._team_leader_increase(), 1760)
+        self.assertAlmostEqual(self.contract._team_leader_increase(),
+                               monthly_payment_with_team_leader_increase)
+        self.assertAlmostEqual(self.contract._team_leader_increase(), Decimal(1760))
 
     def test_calculate_monthly_payment(self):
         """
@@ -194,6 +196,6 @@ class ContractTest(BaseTestSetup):
         else:
             result = self.contract._pre_calculate_monthly_payment()
         self.assertEquals(self.contract.calculate_monthly_payment(), result)
-        self.assertEquals(self.contract.calculate_monthly_payment(), 1760)
-        self.assertEquals(self.contract2.calculate_monthly_payment(), 1600)
-        self.assertEquals(self.contract3.calculate_monthly_payment(), 808)
+        self.assertAlmostEqual(self.contract.calculate_monthly_payment(), 1760)
+        self.assertAlmostEqual(self.contract2.calculate_monthly_payment(), 1600)
+        self.assertAlmostEqual(self.contract3.calculate_monthly_payment(), 808)
