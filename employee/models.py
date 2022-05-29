@@ -37,6 +37,16 @@ class Employee(models.Model):
         # Check if the employee is a team leader in one of the teams
         return hasattr(self, 'team_leader')
 
+    def get_total_monthly_payment(self):
+        """
+        Calculate the monthly payment of an employee. We should consider that there will
+        be several contracts for an employee.
+        """
+        payments = [contract.calculate_monthly_payment() for contract in self.contracts.all() if
+                    self.contracts.all().exists()]
+        print(payments)
+        return sum(payments)
+
     class Meta:
         ordering = ['-date_joined']
 
@@ -132,7 +142,7 @@ class Contract(models.Model):
         Adding additonal payment percentage for team leaders
         """
         monthly_payment = self._pre_calculate_monthly_payment()
-        return monthly_payment + (monthly_payment * (TEAM_LEADER_INCREASE_PERCENTAGE / 100))
+        return monthly_payment + (monthly_payment * Decimal(TEAM_LEADER_INCREASE_PERCENTAGE / 100))
 
     def calculate_monthly_payment(self) -> Decimal:
         """
