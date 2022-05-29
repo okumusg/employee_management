@@ -37,6 +37,15 @@ class Employee(models.Model):
         # Check if the employee is a team leader in one of the teams
         return hasattr(self, 'team_leader')
 
+    def get_total_monthly_payment(self):
+        """
+        Calculate the monthly payment of an employee. We should consider that there will
+        be several contracts for an employee.
+        """
+        payments = [contract.calculate_monthly_payment() for contract in self.contracts.all() if
+                    self.contracts.all().exists()]
+        return sum(payments)
+
     class Meta:
         ordering = ['-date_joined']
 

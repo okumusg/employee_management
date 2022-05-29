@@ -70,6 +70,15 @@ class EmployeeModelTest(BaseTestSetup):
     def test_is_team_leader(self):
         self.assertTrue(self.employee1.is_team_leader())
 
+    def test_get_total_monthly_payment(self):
+        """
+        Hourly rate -> 10
+        Monthly work hours -> 4 * 40 = 160
+        Monthly base payment should be -> 160 * 10 = 1600 for employee_1 and employee_2
+        %10 percent increase -> 1600 + 160 = 1760 for employee_1
+        """
+        self.assertEquals(self.employee1.get_total_monthly_payment(), 1760)
+
 
 class TeamModelTest(BaseTestSetup):
     def test_team_representation(self):
