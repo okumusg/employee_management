@@ -3,6 +3,11 @@ from .models import Employee, Team, TeamEmployee, TeamLeader, WorkArrangement, C
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
+    total_monthly_payment = serializers.SerializerMethodField()
+
+    def get_total_monthly_payment(self, employee_obj):
+        return employee_obj.get_total_monthly_payment()
+
     class Meta:
         model = Employee
         fields = "__all__"

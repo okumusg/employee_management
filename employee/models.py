@@ -44,6 +44,7 @@ class Employee(models.Model):
         """
         payments = [contract.calculate_monthly_payment() for contract in self.contracts.all() if
                     self.contracts.all().exists()]
+        print(payments)
         return sum(payments)
 
     class Meta:
@@ -141,7 +142,7 @@ class Contract(models.Model):
         Adding additonal payment percentage for team leaders
         """
         monthly_payment = self._pre_calculate_monthly_payment()
-        return monthly_payment + (monthly_payment * (TEAM_LEADER_INCREASE_PERCENTAGE / 100))
+        return monthly_payment + (monthly_payment * Decimal(TEAM_LEADER_INCREASE_PERCENTAGE / 100))
 
     def calculate_monthly_payment(self) -> Decimal:
         """
