@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .constants import *
+from employee.constants import EMPLOYMENT_TYPES, FULL_TIME, WEEK_COUNT_IN_MONTH, TEAM_LEADER_INCREASE_PERCENTAGE
 
 
 class Employee(models.Model):
@@ -28,13 +28,18 @@ class Employee(models.Model):
                                        help_text=_("Employee's entry date to company"))
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     def get_hourly_rate(self):
+        """
+        Return hourly_rate of an employee
+        """
         return self.hourly_rate
 
     def is_team_leader(self):
-        # Check if the employee is a team leader in one of the teams
+        """
+        Check if the employee is a team leader in one of the teams
+        """
         return hasattr(self, 'team_leader')
 
     def get_total_monthly_payment(self):
@@ -44,7 +49,6 @@ class Employee(models.Model):
         """
         payments = [contract.calculate_monthly_payment() for contract in self.contracts.all() if
                     self.contracts.all().exists()]
-        print(payments)
         return sum(payments)
 
     class Meta:
@@ -65,13 +69,17 @@ class Team(models.Model):
     creation_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
 
     class Meta:
         ordering = ['-creation_time']
 
 
 class TeamEmployee(models.Model):
+    """
+    We will store information about the team employees of a team.
+    related to :model:`employee.Team` and  :model:`employee.Employee`
+    """
     team = models.ForeignKey(Team,
                              verbose_name=_("Team"),
                              on_delete=models.CASCADE,
@@ -87,6 +95,10 @@ class TeamEmployee(models.Model):
 
 
 class TeamLeader(models.Model):
+    """
+    We will store information about the team leader of a team.
+    related to :model:`employee.Team` and  :model:`employee.Employee`
+    """
     team = models.OneToOneField(Team,
                                 verbose_name=_("Team"),
                                 on_delete=models.CASCADE,
@@ -102,6 +114,10 @@ class TeamLeader(models.Model):
 
 
 class WorkArrangement(models.Model):
+    """
+    We will store information about work arrangements.
+    Example: Full time and part-time and their total work hours in a week.
+    """
     employment_type = models.CharField(verbose_name=_("Employment type"),
                                        max_length=10,
                                        choices=EMPLOYMENT_TYPES,
@@ -115,31 +131,36 @@ class WorkArrangement(models.Model):
         return f"{self.employment_type}/{self.weekly_work_hours} hours in a week."
 
     def get_monthly_work_hours(self):
+        """Return monthly work hours by multiplying it with a constant."""
         return WEEK_COUNT_IN_MONTH * self.weekly_work_hours
 
 
 class Contract(models.Model):
     """
     We will save the employee's contract information in this model.
+    related to :model:`employee.Employee` and  :model:`employee.WorkArrangement`.
     """
     employee = models.ForeignKey(Employee,
                                  verbose_name=_("Employee"),
                                  on_delete=models.CASCADE,
                                  related_name='contracts',
-                                 help_text=_("The employee who has this work contract."))
+                                 help_text=_("The foreign key of the employee who has this work contract."))
     work_arrangement = models.ForeignKey(WorkArrangement,
                                          verbose_name=_("Work arrangement"),
                                          on_delete=models.CASCADE,
                                          related_name='contracts',
-                                         help_text=_("The work arrangement for this contract."))
+                                         help_text=_("The work arrangement's foreign key for this contract."))
     creation_time = models.DateTimeField(auto_now_add=True)
 
     def _pre_calculate_monthly_payment(self) -> Decimal:
+        """
+        We are calculating base payment for a month. It doesn't contain any bonuses or etc.
+        """
         return self.work_arrangement.get_monthly_work_hours() * self.employee.get_hourly_rate()
 
     def _team_leader_increase(self):
         """
-        Adding additonal payment percentage for team leaders
+        Adding additonal payment bonus for team leaders
         """
         monthly_payment = self._pre_calculate_monthly_payment()
         return monthly_payment + (monthly_payment * Decimal(TEAM_LEADER_INCREASE_PERCENTAGE / 100))
