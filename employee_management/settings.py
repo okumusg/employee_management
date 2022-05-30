@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'drf_spectacular',
+    'django_extensions',
 
     # Django apps
     'django.contrib.admin',
