@@ -34,7 +34,7 @@ class TeamEmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TeamEmployee
-        fields = "__all__"
+        fields = ['id', 'team', 'member']
 
 
 class TeamLeaderSerializer(serializers.ModelSerializer):
@@ -44,7 +44,7 @@ class TeamLeaderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TeamLeader
-        fields = "__all__"
+        fields = ['id', 'team', 'leader']
 
 
 class WorkArrangementSerializer(serializers.ModelSerializer):
@@ -54,7 +54,7 @@ class WorkArrangementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WorkArrangement
-        fields = "__all__"
+        fields = ['id', 'employment_type', 'weekly_work_hours']
 
 
 class ContractSerializer(serializers.ModelSerializer):
@@ -64,4 +64,4 @@ class ContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = "__all__"
+        fields = ['id', 'employee', 'work_arrangement']
