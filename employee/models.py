@@ -93,6 +93,9 @@ class TeamEmployee(models.Model):
     def __str__(self):
         return f"{self.member} member of team ->{self.team}"
 
+    class Meta:
+        ordering = ['-id']
+
 
 class TeamLeader(models.Model):
     """
@@ -111,6 +114,9 @@ class TeamLeader(models.Model):
 
     def __str__(self):
         return f"{self.leader} leader of team ->{self.team}"
+
+    class Meta:
+        ordering = ['-id']
 
 
 class WorkArrangement(models.Model):
@@ -133,6 +139,9 @@ class WorkArrangement(models.Model):
     def get_monthly_work_hours(self):
         """Return monthly work hours by multiplying it with a constant."""
         return WEEK_COUNT_IN_MONTH * self.weekly_work_hours
+
+    class Meta:
+        ordering = ['-id']
 
 
 class Contract(models.Model):
