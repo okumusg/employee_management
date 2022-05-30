@@ -32,10 +32,12 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda v: [s.strip() for s in v.spl
 INSTALLED_APPS = [
     # Our apps
     'employee',
+
     # Rest framework
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'drf_spectacular',
 
     # Django apps
     'django.contrib.admin',
@@ -163,7 +165,16 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissions',
     ],
     'DATETIME_FORMAT': '%a, %d %b %Y %H:%M:%S',
-    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES
+    'DEFAULT_RENDERER_CLASSES': DEFAULT_RENDERER_CLASSES,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allowing requests from all sources
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Employee management API',
+    'DESCRIPTION': 'API backend for employee management system.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
